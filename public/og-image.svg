@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#fbf8f2"/>
+  <path d="M0 0h1200v630H0z" fill="url(#grid)" opacity=".55"/>
+  <circle cx="1010" cy="120" r="330" fill="#d99a3d" opacity=".2"/>
+  <circle cx="120" cy="560" r="260" fill="#111827" opacity=".08"/>
+  <rect x="84" y="74" width="1032" height="482" rx="34" fill="#fffdf8" stroke="#e5dccd"/>
+  <rect x="126" y="116" width="58" height="58" rx="14" fill="#111827"/>
+  <circle cx="176" cy="124" r="5" fill="#d99a3d"/>
+  <text x="155" y="154" text-anchor="middle" font-family="Georgia, serif" font-size="32" fill="#fff7ed">S</text>
+  <text x="204" y="151" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700" fill="#111827">Startup Setup</text>
+  <text x="126" y="275" font-family="Georgia, serif" font-size="78" fill="#111827">Lead management</text>
+  <text x="126" y="360" font-family="Georgia, serif" font-size="78" fill="#111827">for real operations</text>
+  <text x="128" y="426" font-family="Inter, Arial, sans-serif" font-size="30" fill="#4b5563">Leads, follow-ups, workflows, WhatsApp, and AI assistance in one system.</text>
+  <rect x="128" y="478" width="238" height="48" rx="24" fill="#111827"/>
+  <text x="247" y="510" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700" fill="#fff7ed">startupsetup.in</text>
+  <defs>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0v48" stroke="#111827" stroke-opacity=".06"/>
+    </pattern>
+  </defs>
+</svg>
