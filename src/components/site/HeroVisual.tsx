@@ -5,8 +5,11 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
-  Filter,
+  Database,
+  FileText,
   Lock,
+  Mail,
+  MessageSquare,
   Search,
   Send,
   ShoppingBag,
@@ -14,7 +17,6 @@ import {
   Star,
   TrendingUp,
   UserPlus,
-  Zap,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -26,7 +28,7 @@ const screens = [
 ] as const;
 
 /* Screens get a `live` flag so their timers pause when the hero is off-screen */
-type ScreenProps = { live: boolean };
+type ScreenProps = { live: boolean; onComplete?: () => void };
 
 /* ---------------- Website (client storefront) ---------------- */
 const webProducts = [
@@ -191,17 +193,24 @@ const crmTone: Record<string, { dot: string; chip: string }> = {
   primary: { dot: "bg-primary", chip: "bg-primary/10 text-primary" },
 };
 
-function CRMScreen({ live }: ScreenProps) {
+function CRMScreen({ live, onComplete }: ScreenProps) {
   const [pulseIdx, setPulseIdx] = useState<number | null>(null);
+  const [count, setCount] = useState(0);
+
   useEffect(() => {
     if (!live) return;
+    if (count >= 3) {
+      if (onComplete) onComplete();
+      return;
+    }
     const id = setInterval(() => {
       const idx = Math.floor(Math.random() * crmLeads.length);
       setPulseIdx(idx);
-      setTimeout(() => setPulseIdx(null), 1200);
-    }, 3000);
+      setTimeout(() => setPulseIdx(null), 400);
+      setCount((c) => c + 1);
+    }, 850);
     return () => clearInterval(id);
-  }, [live]);
+  }, [live, count, onComplete]);
 
   return (
     <div className="flex h-full bg-card">
@@ -299,103 +308,127 @@ function CRMScreen({ live }: ScreenProps) {
   );
 }
 
-/* ---------------- Automation ---------------- */
-const autoSteps = [
-  { icon: UserPlus, label: "New lead captured", sub: "WhatsApp · web form" },
-  { icon: Filter, label: "Lead qualified", sub: "scored & routed to sales" },
-  { icon: Send, label: "Auto-reply sent", sub: "personalised in seconds" },
-  { icon: Bell, label: "Team notified", sub: "Slack ping · CRM updated" },
+const autoFlow = [
+  { icon: UserPlus, label: "Lead captured", sub: "WhatsApp · web form" },
+  { icon: Sparkles, label: "Enriched with AI", sub: "scored & auto-tagged" },
+  { icon: Database, label: "Saved to CRM", sub: "contact + auto-reply" },
+  { icon: Bell, label: "Team notified", sub: "Slack · #sales" },
 ];
 
-function AutomationScreen({ live }: ScreenProps) {
-  const [step, setStep] = useState(0);
+function AutomationScreen({ live, onComplete }: ScreenProps) {
+  const [active, setActive] = useState(0);
+
   useEffect(() => {
     if (!live) return;
-    const id = setInterval(() => setStep((s) => (s + 1) % (autoSteps.length + 1)), 1150);
+    if (active >= autoFlow.length) {
+      if (onComplete) {
+        const timeoutId = setTimeout(onComplete, 800);
+        return () => clearTimeout(timeoutId);
+      }
+      return;
+    }
+    const id = setInterval(() => {
+      setActive((a) => a + 1);
+    }, 600);
     return () => clearInterval(id);
-  }, [live]);
+  }, [live, active, onComplete]);
 
   return (
     <div className="flex h-full flex-col bg-card p-4">
+      {/* header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="grid h-6 w-6 place-items-center rounded-lg bg-accent/10 text-accent">
-            <Zap className="h-3 w-3" strokeWidth={2.5} />
-          </span>
-          <div>
-            <div className="text-[11px] font-semibold leading-none">Lead-intake workflow</div>
-            <div className="mt-1 font-mono text-[8px] text-muted-foreground">
-              runs on every new lead
-            </div>
+        <div>
+          <div className="text-[11px] font-semibold leading-none text-foreground">
+            Lead-intake flow
+          </div>
+          <div className="mt-1 font-mono text-[8px] text-muted-foreground">
+            runs on every new lead
           </div>
         </div>
-        <span className="flex items-center gap-1.5 rounded-full border border-hairline px-2 py-1 font-mono text-[8px] uppercase tracking-[0.12em] text-success">
+        <span className="flex items-center gap-1.5 rounded-full bg-success/10 px-2 py-0.5 font-mono text-[8px] uppercase tracking-[0.12em] text-success">
           <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse-dot" />
-          Running
+          Live
         </span>
       </div>
 
-      <div className="relative mt-3 flex flex-1 flex-col">
-        {/* rail — node centres sit at 12.5% / 37.5% / 62.5% / 87.5% of the body */}
-        <span className="absolute bottom-[12.5%] left-[10.5px] top-[12.5%] w-px bg-hairline" />
-        {/* progress fill — length derived straight from `step`, so it can't desync */}
-        <motion.span
-          className="absolute left-[10.5px] top-[12.5%] w-px origin-top bg-success/50"
-          animate={{
-            height: `${(Math.min(step, autoSteps.length - 1) / autoSteps.length) * 100}%`,
-          }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-        />
-        {autoSteps.map((s, i) => {
-          const done = i < step;
-          const active = i === step;
+      {/* vertical workflow */}
+      <div className="mt-3.5 flex flex-1 flex-col justify-center">
+        {autoFlow.map((s, i) => {
+          const done = i < active;
+          const isActive = i === active;
           const Icon = s.icon;
           return (
-            <div key={s.label} className="relative flex flex-1 items-center gap-2.5">
+            <div key={s.label} className="relative flex gap-3 pb-2.5 last:pb-0">
+              {i < autoFlow.length - 1 && (
+                <span
+                  className={`absolute bottom-1 left-[13.5px] top-7 w-px transition-colors duration-300 ${
+                    done ? "bg-accent/50" : "bg-hairline"
+                  }`}
+                />
+              )}
               <span
-                className={`relative z-10 grid h-[22px] w-[22px] shrink-0 place-items-center rounded-full border transition-colors duration-300 ${
+                className={`relative z-10 grid h-7 w-7 shrink-0 place-items-center rounded-full border transition-colors duration-300 ${
                   done
-                    ? "border-success/40 bg-success/15 text-success"
-                    : active
-                      ? "border-accent bg-accent/10 text-accent"
-                      : "border-hairline bg-surface text-muted-foreground/45"
+                    ? "border-accent/40 bg-accent/10 text-accent"
+                    : isActive
+                      ? "border-accent bg-accent text-accent-foreground"
+                      : "border-hairline bg-surface text-muted-foreground/50"
                 }`}
               >
-                {active && (
+                {isActive && (
                   <motion.span
                     className="absolute inset-0 rounded-full ring-2 ring-accent/40"
                     initial={{ opacity: 0.6, scale: 1 }}
                     animate={{ opacity: 0, scale: 1.6 }}
-                    transition={{ duration: 1.15, repeat: Infinity, ease: "easeOut" }}
+                    transition={{ duration: 1.2, repeat: Infinity, ease: "easeOut" }}
                   />
                 )}
                 {done ? (
                   <Check className="h-3 w-3" strokeWidth={3} />
                 ) : (
-                  <Icon className="h-[12px] w-[12px]" strokeWidth={2.25} />
+                  <Icon className="h-3.5 w-3.5" strokeWidth={2} />
                 )}
               </span>
               <div
-                className={`flex-1 rounded-lg px-2 py-1 transition-all duration-300 ${
-                  active ? "bg-accent/[0.05]" : ""
-                } ${i > step ? "opacity-45" : "opacity-100"}`}
+                className={`flex flex-1 items-center justify-between rounded-lg border px-2.5 py-1.5 transition-all duration-300 ${
+                  isActive ? "border-accent/30 bg-accent/[0.05]" : "border-hairline bg-surface/40"
+                } ${i > active ? "opacity-50" : "opacity-100"}`}
               >
-                <div className="text-[10.5px] font-medium leading-tight">{s.label}</div>
-                <div className="mt-0.5 font-mono text-[8.5px] text-muted-foreground">
-                  {done ? "done" : active ? "running…" : s.sub}
+                <div className="min-w-0">
+                  <div className="truncate text-[10.5px] font-medium leading-tight text-foreground">
+                    {s.label}
+                  </div>
+                  <div className="mt-0.5 truncate font-mono text-[8px] text-muted-foreground">
+                    {s.sub}
+                  </div>
                 </div>
+                <span
+                  className={`ml-2 shrink-0 font-mono text-[7.5px] uppercase tracking-[0.1em] ${
+                    done ? "text-success" : isActive ? "text-accent" : "text-muted-foreground/50"
+                  }`}
+                >
+                  {done ? "done" : isActive ? "running" : "queued"}
+                </span>
               </div>
             </div>
           );
         })}
       </div>
 
-      <div className="mt-1 flex items-center justify-between rounded-lg border border-hairline bg-surface/60 px-3 py-2">
-        <span className="font-mono text-[8.5px] text-muted-foreground">Today</span>
-        <span className="font-display text-[13px] font-semibold leading-none tracking-tight">
-          1,240 <span className="text-[8.5px] font-normal text-muted-foreground">runs</span>
-        </span>
-        <span className="font-mono text-[8.5px] text-success">100% success</span>
+      {/* metrics */}
+      <div className="mt-3 grid grid-cols-3 gap-px overflow-hidden rounded-lg border border-hairline bg-hairline">
+        {[
+          { l: "Runs today", v: "1,284", c: "text-foreground" },
+          { l: "Avg latency", v: "412ms", c: "text-foreground" },
+          { l: "Success", v: "99.6%", c: "text-success" },
+        ].map((m) => (
+          <div key={m.l} className="bg-card px-2.5 py-2">
+            <div className="font-mono text-[7px] uppercase tracking-wider text-muted-foreground">
+              {m.l}
+            </div>
+            <div className={`mt-0.5 font-display text-[13px] font-semibold ${m.c}`}>{m.v}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -413,13 +446,23 @@ const aiActions = [
   { icon: Bell, label: "WhatsApp reminder", when: "Wed · 5:00 PM" },
 ];
 
-function AIScreen({ live }: ScreenProps) {
+function AIScreen({ live, onComplete }: ScreenProps) {
   const [shown, setShown] = useState(1);
+
   useEffect(() => {
     if (!live) return;
-    const id = setInterval(() => setShown((n) => (n >= aiTurns.length ? 1 : n + 1)), 2400);
+    if (shown >= aiTurns.length) {
+      if (onComplete) {
+        const timeoutId = setTimeout(onComplete, 1000);
+        return () => clearTimeout(timeoutId);
+      }
+      return;
+    }
+    const id = setInterval(() => {
+      setShown((n) => n + 1);
+    }, 900);
     return () => clearInterval(id);
-  }, [live]);
+  }, [live, shown, onComplete]);
 
   return (
     <div className="flex h-full flex-col bg-card p-4">
@@ -533,13 +576,17 @@ export function HeroVisual() {
     return () => io.disconnect();
   }, []);
 
+  const handleComplete = () => {
+    setActiveIdx((i) => (i + 1) % screens.length);
+  };
+
   useEffect(() => {
-    if (!inView) return;
-    const id = setInterval(() => {
-      if (!paused.current) setActiveIdx((i) => (i + 1) % screens.length);
-    }, 5200);
-    return () => clearInterval(id);
-  }, [inView]);
+    if (!inView || activeIdx !== 0) return;
+    const id = setTimeout(() => {
+      handleComplete();
+    }, 1500); // Website stays for 1.5s then switches
+    return () => clearTimeout(id);
+  }, [activeIdx, inView]);
 
   const live = inView;
 
@@ -547,8 +594,6 @@ export function HeroVisual() {
     <div
       ref={rootRef}
       className="relative isolate"
-      onMouseEnter={() => (paused.current = true)}
-      onMouseLeave={() => (paused.current = false)}
     >
       {/* Soft contact shadow — grounds the floating device */}
       <div className="pointer-events-none absolute inset-x-8 -bottom-6 z-0 h-14 rounded-[50%] bg-foreground/[0.12] blur-2xl" />
@@ -626,9 +671,9 @@ export function HeroVisual() {
                   className="h-full"
                 >
                   {activeIdx === 0 && <WebsiteScreen />}
-                  {activeIdx === 1 && <CRMScreen live={live} />}
-                  {activeIdx === 2 && <AutomationScreen live={live} />}
-                  {activeIdx === 3 && <AIScreen live={live} />}
+                  {activeIdx === 1 && <CRMScreen live={live} onComplete={handleComplete} />}
+                  {activeIdx === 2 && <AutomationScreen live={live} onComplete={handleComplete} />}
+                  {activeIdx === 3 && <AIScreen live={live} onComplete={handleComplete} />}
                 </motion.div>
               </AnimatePresence>
             </div>

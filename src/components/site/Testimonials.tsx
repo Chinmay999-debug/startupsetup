@@ -3,27 +3,35 @@ import { Reveal } from "./Reveal";
 const testimonials = [
   {
     quote:
-      "After our new website launched, we started getting 3–4 new patient inquiries every week from Google. The design is clean and professional — exactly what we needed.",
-    author: "Dr. Kavya Menon",
-    role: "Clinic Director, HealthFirst Diagnostics",
+      "Our treatment-led pages changed how patients find us online. Inquiries and bookings start landing directly in a tap. It’s clean, mobile-first, and highly effective.",
+    author: "Dr. Kunal",
+    role: "Founder, Ilona Clinics",
+    category: "Dermatology",
+    initial: "K",
+  },
+  {
+    quote:
+      "We wanted a professional web presence that made it simple for patients to reach us on WhatsApp. The site is fast, presentable, and has noticeably increased callbacks.",
+    author: "Dr. Kamlesh",
+    role: "Founder, Arise Physiotherapy",
     category: "Healthcare",
-    initial: "KM",
+    initial: "K",
   },
   {
     quote:
-      "Our admissions team used to spend hours chasing leads in WhatsApp groups. The software centralised everything, and our conversion rate jumped noticeably.",
-    author: "Suresh Balakrishnan",
-    role: "Head of Operations, BrightPath Academy",
-    category: "Education",
-    initial: "SB",
+      "Clean, professional, and built for speed. The design matches the quality of care we offer. Patients can easily navigate our clinic's treatments and request appointments.",
+    author: "Dr. Rudraksh",
+    role: "Director, PhysioZen Centre",
+    category: "Healthcare",
+    initial: "R",
   },
   {
     quote:
-      "We were hesitant about investing in a website, but the ROI was clear within the first month. Our Google Business setup alone brought in 6 new clients.",
-    author: "Manish Tiwari",
-    role: "Proprietor, TruCare Pest Control",
-    category: "Local business",
-    initial: "MT",
+      "The custom CRM and WhatsApp automation completely unified our operations. Leads route automatically, document updates are logged, and follow-ups never get dropped.",
+    author: "Rajeshwer Tiwari",
+    role: "Director, SaralVidya & RealFinServ",
+    category: "Education & Finance",
+    initial: "RT",
   },
 ];
 
@@ -50,7 +58,7 @@ export function Testimonials() {
           </div>
         </Reveal>
 
-        <div className="grid grid-cols-1 gap-px overflow-hidden border-y border-hairline bg-hairline md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-px overflow-hidden border-y border-hairline bg-hairline sm:grid-cols-2 lg:grid-cols-4">
           {testimonials.map((t, i) => (
             <Reveal key={t.author} delay={i * 0.08}>
               <figure className="flex h-full flex-col bg-card p-7 transition-colors hover:bg-surface-elevated sm:p-8">
@@ -66,7 +74,7 @@ export function Testimonials() {
                     ))}
                   </div>
                 </div>
-                <blockquote className="mt-6 flex-1 font-serif text-[18px] italic leading-[1.45] text-foreground/85">
+                <blockquote className="mt-6 flex-1 font-serif text-[17px] italic leading-[1.45] text-foreground/85">
                   “{t.quote}”
                 </blockquote>
                 <figcaption className="mt-7 flex items-center gap-3 border-t border-hairline pt-5">

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Code2, Compass, PenTool, Rocket } from "lucide-react";
+import { Check, Code2, Compass, PenTool, Rocket, TrendingUp } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Reveal } from "./Reveal";
 
@@ -34,83 +34,190 @@ const steps = [
   },
 ];
 
-const INTERVAL = 2800;
+const INTERVAL = 1600;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-/* ---- per-step animated scene ---- */
+/* ---- per-step finished mini-mockup that fills the stage ---- */
 function Scene({ index }: { index: number }) {
   const Icon = steps[index].icon;
+  const badge = (
+    <span className="grid h-5 w-5 shrink-0 place-items-center rounded-md bg-accent/12 text-accent">
+      <Icon className="h-3 w-3" strokeWidth={2} />
+    </span>
+  );
 
-  const motif = (() => {
-    switch (index) {
-      case 0: // Discover — radar rings
-        return [0, 1, 2].map((k) => (
-          <motion.span
-            key={k}
-            className="absolute h-28 w-28 rounded-full border border-accent/30"
-            initial={{ scale: 0.4, opacity: 0 }}
-            animate={{ scale: [0.4, 1.6], opacity: [0.6, 0] }}
-            transition={{ duration: 2.6, repeat: Infinity, delay: k * 0.85, ease: "easeOut" }}
-          />
-        ));
-      case 1: // Design — wireframe drawing itself
-        return (
-          <div className="absolute flex w-28 flex-col gap-2">
-            {[80, 100, 60].map((w, k) => (
+  // Discover & plan — a discovery brief with real checklist items
+  if (index === 0) {
+    const items = ["Business goals", "Target audience", "Scope & timeline"];
+    return (
+      <div className="absolute inset-0 grid place-items-center p-4 sm:p-6">
+        <div className="w-full max-w-[250px] rounded-xl border border-hairline bg-card p-3.5 shadow-soft">
+          <div className="mb-3 flex items-center gap-2">
+            {badge}
+            <span className="text-[11px] font-semibold tracking-tight">Discovery brief</span>
+          </div>
+          {items.map((label, k) => (
+            <div key={label} className="mb-2 flex items-center gap-2.5 last:mb-0">
               <motion.span
+                className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-accent text-accent-foreground"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.35 + k * 0.4, type: "spring", stiffness: 400, damping: 18 }}
+              >
+                <Check className="h-2.5 w-2.5" strokeWidth={3} />
+              </motion.span>
+              <span className="text-[10.5px] text-muted-foreground">{label}</span>
+            </div>
+          ))}
+          <div className="mt-3 flex items-center gap-1.5 border-t border-hairline pt-2.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse-dot" />
+            <span className="font-mono text-[8px] text-muted-foreground">
+              Scope locked · ready to design
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Design — a finished mini landing-page preview
+  if (index === 1) {
+    return (
+      <div className="absolute inset-0 grid place-items-center p-4 sm:p-6">
+        <div className="w-full max-w-[250px] overflow-hidden rounded-xl border border-hairline bg-card shadow-soft">
+          <div className="flex items-center gap-1.5 border-b border-hairline bg-surface/60 px-2.5 py-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-destructive/40" />
+            <span className="h-1.5 w-1.5 rounded-full bg-warning/50" />
+            <span className="h-1.5 w-1.5 rounded-full bg-success/50" />
+            <span className="ml-auto rounded bg-card px-2 py-0.5 font-mono text-[7.5px] text-muted-foreground">
+              yourbrand.com
+            </span>
+          </div>
+          <div className="p-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-semibold tracking-tight">Lumen</span>
+              <div className="flex gap-2">
+                <span className="text-[7.5px] text-muted-foreground">Work</span>
+                <span className="text-[7.5px] text-muted-foreground">About</span>
+              </div>
+            </div>
+            <motion.div
+              className="mt-2.5"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.4, ease: EASE }}
+            >
+              <div className="font-display text-[13px] font-semibold leading-tight tracking-tight">
+                Design that <span className="text-accent">converts.</span>
+              </div>
+              <span className="mt-2 inline-block rounded-full bg-primary px-2.5 py-1 text-[8px] font-medium text-primary-foreground">
+                Get started
+              </span>
+            </motion.div>
+            <div className="mt-3 grid grid-cols-3 gap-1.5">
+              {["Fast", "Clean", "Yours"].map((t, k) => (
+                <motion.div
+                  key={t}
+                  className="rounded-md border border-hairline bg-surface/50 py-1.5 text-center text-[7.5px] font-medium text-muted-foreground"
+                  initial={{ opacity: 0, scale: 0.92 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.45 + k * 0.1, duration: 0.3, ease: EASE }}
+                >
+                  {t}
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Build — a code editor with real code
+  if (index === 2) {
+    const codeLines: { t: string; c: string }[][] = [
+      [
+        { t: "export ", c: "text-accent" },
+        { t: "function ", c: "text-foreground/55" },
+        { t: "App", c: "text-foreground" },
+        { t: "() {", c: "text-foreground/40" },
+      ],
+      [
+        { t: "  return ", c: "text-accent" },
+        { t: "<Live ", c: "text-success" },
+        { t: "/>", c: "text-success" },
+      ],
+      [{ t: "}", c: "text-foreground/40" }],
+      [{ t: "// shipped to prod ✓", c: "text-muted-foreground/60" }],
+    ];
+    return (
+      <div className="absolute inset-0 grid place-items-center p-4 sm:p-6">
+        <div className="w-full max-w-[250px] overflow-hidden rounded-xl border border-hairline bg-card shadow-soft">
+          <div className="flex items-center gap-1.5 border-b border-hairline bg-surface/60 px-2.5 py-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-destructive/40" />
+            <span className="h-1.5 w-1.5 rounded-full bg-warning/50" />
+            <span className="h-1.5 w-1.5 rounded-full bg-success/50" />
+            <span className="ml-1 font-mono text-[8px] text-muted-foreground">App.tsx</span>
+          </div>
+          <div className="p-3.5 font-mono text-[9.5px] leading-[1.75]">
+            {codeLines.map((line, k) => (
+              <motion.div
                 key={k}
-                className="h-2 rounded-full bg-accent/25"
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: `${w}%`, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.2 + k * 0.18, ease: EASE }}
-              />
+                className="whitespace-pre"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 + k * 0.2, duration: 0.25 }}
+              >
+                {line.map((tok, j) => (
+                  <span key={j} className={tok.c}>
+                    {tok.t}
+                  </span>
+                ))}
+              </motion.div>
             ))}
           </div>
-        );
-      case 2: // Build — code lines stacking up
-        return (
-          <div className="absolute flex w-32 flex-col items-start gap-1.5">
-            {[55, 85, 40, 70].map((w, k) => (
-              <motion.span
-                key={k}
-                className="h-1.5 rounded-full bg-accent/30"
-                initial={{ width: 0 }}
-                animate={{ width: `${w}%` }}
-                transition={{
-                  duration: 0.5,
-                  delay: k * 0.12,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  repeatDelay: 1.1,
-                  ease: EASE,
-                }}
-              />
-            ))}
-          </div>
-        );
-      default: // Launch — rising particles
-        return [0, 1, 2, 3].map((k) => (
-          <motion.span
-            key={k}
-            className="absolute h-1.5 w-1.5 rounded-full bg-accent/45"
-            style={{ left: `${22 + k * 18}%`, bottom: "18%" }}
-            animate={{ y: [0, -70], opacity: [0, 1, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, delay: k * 0.35, ease: "easeOut" }}
-          />
-        ));
-    }
-  })();
+        </div>
+      </div>
+    );
+  }
 
+  // Launch & grow — a live analytics dashboard
   return (
-    <div className="relative grid h-full place-items-center">
-      {motif}
-      <motion.span
-        className="relative z-10 grid h-16 w-16 place-items-center rounded-2xl border border-hairline bg-card text-accent shadow-soft sm:h-[72px] sm:w-[72px]"
-        animate={index === 3 ? { y: [0, -6, 0] } : { y: 0 }}
-        transition={index === 3 ? { duration: 1.8, repeat: Infinity, ease: "easeInOut" } : {}}
-      >
-        <Icon className="h-7 w-7 sm:h-8 sm:w-8" strokeWidth={1.6} />
-      </motion.span>
+    <div className="absolute inset-0 grid place-items-center p-4 sm:p-6">
+      <div className="w-full max-w-[250px] rounded-xl border border-hairline bg-card p-3.5 shadow-soft">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-semibold tracking-tight">Analytics</span>
+          <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-1.5 py-0.5 font-mono text-[7.5px] uppercase tracking-[0.08em] text-success">
+            <span className="h-1 w-1 rounded-full bg-success animate-pulse-dot" />
+            Live
+          </span>
+        </div>
+        <div className="mt-2 flex items-end gap-2">
+          <span className="font-display text-[20px] font-semibold leading-none tracking-tight">
+            1,248
+          </span>
+          <span className="inline-flex items-center gap-0.5 pb-0.5 text-[9px] font-medium text-success">
+            <TrendingUp className="h-3 w-3" strokeWidth={2.25} />
+            24%
+          </span>
+        </div>
+        <span className="text-[8.5px] text-muted-foreground">visitors this week</span>
+        <div className="mt-3 flex h-12 items-end gap-1.5">
+          {[30, 45, 38, 60, 72, 95].map((h, k) => (
+            <motion.span
+              key={k}
+              className={`flex-1 rounded-t-sm ${k === 5 ? "bg-accent" : "bg-accent/45"}`}
+              initial={{ height: 0 }}
+              animate={{ height: `${h}%` }}
+              transition={{ delay: 0.2 + k * 0.09, duration: 0.5, ease: EASE }}
+            />
+          ))}
+        </div>
+        <div className="mt-1.5 flex justify-between font-mono text-[7px] text-muted-foreground/70">
+          <span>Mon</span>
+          <span>Sun</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -118,7 +225,6 @@ function Scene({ index }: { index: number }) {
 function ProcessPlayer() {
   const [active, setActive] = useState(0);
   const [inView, setInView] = useState(true);
-  const paused = useRef(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -134,7 +240,7 @@ function ProcessPlayer() {
   useEffect(() => {
     if (!inView) return;
     const id = setInterval(() => {
-      if (!paused.current) setActive((a) => (a + 1) % steps.length);
+      setActive((a) => (a + 1) % steps.length);
     }, INTERVAL);
     return () => clearInterval(id);
   }, [inView]);
@@ -144,8 +250,6 @@ function ProcessPlayer() {
   return (
     <div
       ref={rootRef}
-      onMouseEnter={() => (paused.current = true)}
-      onMouseLeave={() => (paused.current = false)}
       className="overflow-hidden rounded-2xl border border-hairline bg-card shadow-elevated"
     >
       {/* Integrated stepper */}
@@ -208,7 +312,7 @@ function ProcessPlayer() {
 
       {/* Body — visual stage + copy */}
       <div className="grid grid-cols-1 sm:grid-cols-12">
-        <div className="relative h-44 overflow-hidden border-b border-hairline bg-gradient-to-br from-accent/[0.07] via-accent/[0.02] to-transparent sm:col-span-5 sm:h-auto sm:min-h-[280px] sm:border-b-0 sm:border-r">
+        <div className="relative h-[228px] overflow-hidden border-b border-hairline bg-gradient-to-br from-accent/[0.07] via-accent/[0.02] to-transparent sm:col-span-5 sm:h-auto sm:min-h-[300px] sm:border-b-0 sm:border-r">
           <AnimatePresence mode="wait">
             <motion.div
               key={active}

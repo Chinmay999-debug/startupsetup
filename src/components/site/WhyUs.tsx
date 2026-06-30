@@ -2,34 +2,34 @@ import { Reveal } from "./Reveal";
 
 const reasons = [
   {
-    metric: "14 days",
+    metric: "7 days",
     label: "Average delivery",
-    desc: "Most websites and MVPs are live within two weeks. We move fast without cutting corners.",
+    desc: "Your website or MVP live in one week. We move fast and ship clean code without cutting corners.",
   },
   {
-    metric: "50+",
-    label: "Projects delivered",
-    desc: "Across healthcare, education, local business, and startups. We've seen it all.",
+    metric: "5+",
+    label: "Industry verticals",
+    desc: "Configured pipelines and custom software shipped across education, clinics, real estate, finance, and solar.",
   },
   {
     metric: "100%",
     label: "Custom-built",
-    desc: "No templates, no page builders. Every project is built specifically for your business.",
+    desc: "No templates, no drag-and-drop builders. Every project is built specifically to match your business workflow.",
   },
   {
     metric: "24h",
-    label: "Support response",
-    desc: "Post-launch, we're on WhatsApp. Real support from the people who built it.",
+    label: "Support",
+    desc: "Direct channel to the developers who built your project. Quick resolution for real business issues.",
   },
   {
     metric: "₹0",
     label: "Discovery fee",
-    desc: "Free initial consultation. We understand your business before quoting anything.",
+    desc: "Free scoping and initial workflow mapping. We map out your software before quoting anything.",
   },
   {
     metric: "Scalable",
     label: "Architecture",
-    desc: "Code built to grow. Starting small doesn't mean you'll need a rebuild later.",
+    desc: "Clean code built to scale. Start with a simple landing page, expand to full ops dashboards as you grow.",
   },
 ];
 
